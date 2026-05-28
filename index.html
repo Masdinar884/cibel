@@ -566,6 +566,10 @@ footer {
 <section id="home">
   <div class="hero-wrap">
     <div>
+      <div class="hero-eyebrow">
+        <div class="live-dot"></div>
+        Sistem Monitoring Aktif
+      </div>
       <h1 class="hero-h1">Pantau Ancaman <span>Siber</span><br>di Indonesia</h1>
       <p class="hero-desc">Platform intelijen ancaman siber untuk memantau, menganalisis, dan merespons serangan cyber di seluruh wilayah Indonesia secara real-time.</p>
       <div class="hero-stats">
@@ -969,15 +973,79 @@ function closeAlert(){ document.getElementById('alertPopup').classList.remove('s
 setTimeout(showAlert,3000); setInterval(showAlert,12000);
 
 // REPORT SUBMIT
-function submitReport(){
-  const btn=document.querySelector('.submit-btn');
-  btn.textContent='Mengirim...'; btn.style.opacity='0.7';
-  setTimeout(()=>{
-    btn.textContent='✓ Laporan Terkirim';
-    btn.style.background='var(--green)';
-    setTimeout(()=>{ btn.textContent='Kirim Laporan'; btn.style.opacity='1'; btn.style.background='var(--accent)'; },3000);
-  },1500);
+async function submitReport(){
+  const btn = document.querySelector('.submit-btn');
+
+  const jenis = document.querySelector('.form-select').value;
+  const lokasi = document.querySelectorAll('.form-input')[0].value.trim();
+  const url = document.querySelectorAll('.form-input')[1].value.trim();
+  const desk = document.querySelector('.form-textarea').value.trim();
+
+  if(!lokasi || !desk){
+    btn.textContent='⚠ Isi form terlebih dulu';
+    btn.style.background='var(--yellow)';
+    setTimeout(()=>{ btn.textContent='Kirim Laporan'; btn.style.background='var(--accent)'; },2500);
+    return;
+  }
+
+  btn.textContent='Mengirim...';
+  btn.style.opacity='0.7';
+  btn.disabled = true;
+
+  const now = new Date();
+  const timestamp = now.toLocaleString('id-ID',{timeZone:'Asia/Jakarta'});
+
+  const text = `🚨 *LAPORAN CYBER CRIME BARU*
+
+📌 *Jenis:* ${jenis}
+📍 *Lokasi:* ${lokasi}
+🌐 *URL/IP:* ${url || '-'}
+🕐 *Waktu:* ${timestamp} WIB
+
+📝 *Deskripsi:*
+${desk}
+
+—
+_Dikirim via Cyber Crime Map Indonesia_`;
+
+  const BOT_TOKEN = '8186237639:AAF4YtDLTkE_PsuufnB3bSZQIrumGN6kqdc';
+  const CHAT_ID = '6225338641';
+
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: CHAT_ID,
+        text: text,
+        parse_mode: 'Markdown'
+      })
+    });
+
+    const data = await res.json();
+
+    if(data.ok){
+      btn.textContent='✓ Laporan Terkirim';
+      btn.style.background='var(--green)';
+      btn.style.opacity='1';
+      // Reset form
+      document.querySelector('.form-select').selectedIndex = 0;
+      document.querySelectorAll('.form-input').forEach(el => el.value='');
+      document.querySelector('.form-textarea').value='';
+    } else {
+      throw new Error(data.description || 'Gagal kirim');
+    }
+  } catch(err) {
+    btn.textContent='✗ Gagal Terkirim';
+    btn.style.background='var(--red)';
+    btn.style.opacity='1';
+    console.error('Telegram error:', err);
+  }
+
+  btn.disabled = false;
+  setTimeout(()=>{ btn.textContent='Kirim Laporan'; btn.style.background='var(--accent)'; }, 3500);
 }
+
 
 // ATTACK LINES
 const linessvg=document.getElementById('attackLines');
