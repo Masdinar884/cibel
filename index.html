@@ -345,7 +345,6 @@ canvas{display:block;}
 /* NOTIFICATION */
 .notif-popup{position:fixed;bottom:20px;right:20px;width:280px;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.4);transform:translateX(320px);transition:transform 0.35s cubic-bezier(0.34,1.4,0.64,1);}
 .notif-popup.show{transform:translateX(0);}
-.notif-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
 .notif-badge{padding:2px 6px;border-radius:4px;background:var(--red-dim);font-size:9px;color:var(--red);font-weight:700;}
 .notif-title{font-size:12px;font-weight:500;color:var(--text);flex:1;}
 .notif-close{background:none;border:none;color:var(--text-3);cursor:pointer;font-size:14px;line-height:1;}
@@ -381,12 +380,6 @@ footer{background:var(--bg-2);border-top:1px solid var(--border);padding:32px 2r
 </head>
 <body>
 
-
-  <div class="notif-header">
-    <span class="notif-badge">ALERT</span>
-    <span class="notif-title" id="alertTitle">Ancaman Terdeteksi</span>
-    <button class="notif-close" onclick="closeAlert()">✕</button>
-  </div>
 </div>
 
 <nav>
